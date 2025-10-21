@@ -20,3 +20,5 @@ Imports:
 Suggests: 
     ximage
 Remotes: hypertidy/ximage
+URL: https://github.com/mdsumner/geotar0
+BugReports: https://github.com/mdsumner/geotar0/issues
