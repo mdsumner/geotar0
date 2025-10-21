@@ -1,0 +1,47 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# geotar0
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The goal of geotar0 is to demonstrate a small example of getting imagery for various places. 
+
+We create a target 'locations' with a function in "_targets.R" that is a dataframe of
+'location,longitude,latitude' - 'location' is just a name, or address - by default the example provides a set of city names to {tidygeocoder}, edit this as you like. 
+
+
+
+## Installation
+
+You can install the development version of geotar0 like so:
+
+``` r
+## dependencies ensures we get hypertidy/ximage, which is only Suggests for plotting
+remotes::install_github("mdsumner/geotar0", dependencies = TRUE)
+```
+
+## Example
+
+This is a basic example which obtains a small quantity of aerial/satellite imagery from
+city names. 
+
+
+```{r example}
+targets::tar_make()  ## resulting .tif files are in _targets/tif_files/
+library(geotar0)
+plot_ims()  ## this plots the images 
+```

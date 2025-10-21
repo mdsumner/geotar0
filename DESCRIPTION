@@ -1,0 +1,22 @@
+Package: geotar0
+Title: Get imagery with targets 
+Version: 0.0.1
+Authors@R: 
+    person("Michael", "Sumner", , "mdsumner@gmail.com", role = c("aut", "cre"))
+Description: Example to get imagery by place name, and (optionally) longitude latitude.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports: 
+    fs,
+    graphics,
+    grDevices,
+    purrr,
+    reproj,
+    targets,
+    vapour
+Suggests: 
+    ximage
+Remotes: hypertidy/ximage

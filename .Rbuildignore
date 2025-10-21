@@ -1,0 +1,8 @@
+^geotar0\.Rproj$
+^\.Rproj\.user$
+^LICENSE\.md$
+^_targets$
+^_targets.R$
+^packages.R$
+$.env$
+^README\.Rmd$
