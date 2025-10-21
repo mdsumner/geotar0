@@ -3,7 +3,7 @@ source("./packages.R")
 
 tar_source()
 
-## example code internal to locations():
+## a different, handcoded example code internal to locations():
 # rbind(data.frame(location = "Davis", lon = c(77 + 58/60 + 3/3600), lat = -(68 + 34/60 + 36/3600)),
 #       data.frame(location = "Casey",
 #                  lon = cbind(110 + 31/60 + 36/3600), lat =  -(66 + 16/60 + 57/3600)),
