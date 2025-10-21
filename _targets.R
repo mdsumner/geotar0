@@ -26,7 +26,9 @@ locations <-  function() {
 tar_assign(
   {
   loc <- locations() |> tar_target()
-  src <- sds::wms_arcgis_mapserver_ESRI.WorldImagery_tms() |> tar_target()
+  ## hypertidy/sds::wms_arcgis_mapserver_ESRI.WorldImagery_tms()
+  src <-  "<GDAL_WMS><Service name=\"TMS\"><ServerUrl>http://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}</ServerUrl></Service><DataWindow><UpperLeftX>-20037508.34</UpperLeftX><UpperLeftY>20037508.34</UpperLeftY><LowerRightX>20037508.34</LowerRightX><LowerRightY>-20037508.34</LowerRightY><TileLevel>17</TileLevel><TileCountX>1</TileCountX><TileCountY>1</TileCountY><YOrigin>top</YOrigin></DataWindow><Projection>EPSG:900913</Projection><BlockSizeX>256</BlockSizeX><BlockSizeY>256</BlockSizeY><BandsCount>3</BandsCount><MaxConnections>10</MaxConnections><Cache /><ZeroBlockHttpCodes>204,404,403</ZeroBlockHttpCodes></GDAL_WMS>" |>
+    tar_target()
   crs <- mk_crs(loc$lon, loc$lat) |> tar_target(pattern = map(loc))
   ext <- identity(c(-1, 1, -1, 1) * 3000) |> tar_target()  ## this might become location specific
   llext <- mkcrsextent(ext, crs) |> tar_target(pattern = map(crs), iteration = "list")
