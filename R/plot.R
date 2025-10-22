@@ -10,12 +10,12 @@
 #' @importFrom graphics par
 #' @importFrom grDevices n2mfrow
 #' @export
-plot_ims <- function(nmax = 24) {
+plot_ims <- function(x = tar_read(result), nmax = 25) {
   if (!requireNamespace("ximage")) {
     stop("{ximage} is required for plot_ims(), install with 'remotes::install_github(\"hypertidy/ximage\")'")
   }
-  x <- try(tar_read_raw("result"), silent = TRUE)
-  if (inherits(x, "try-error")) stop("no 'result' found, trying runing 'targets::tar_make()'")
+  #x <- try(tar_read_raw("result"), silent = TRUE)
+  #if (inherits(x, "try-error")) stop("no 'result' found, trying runing 'targets::tar_make()'")
   nr <- nrow(x)
   n <- min(nmax, nr)
   if (n < nr) {

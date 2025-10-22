@@ -15,7 +15,8 @@ raster_file <- function(dsn, crs, ext, dim) {
   }
   gdal_raster_dsn(dsn,
                   out_dsn = file,
-                  target_crs = crs, target_ext = ext, target_dim = dim)[[1]]
+                  target_crs = crs, target_ext = ext, target_dim = dim,
+                  options = c("-co","COMPRESS=JPEG", "-co", "PHOTOMETRIC=YCBCR", "-of", "GTiff", "-co", "TILED=NO"))[[1]]
 }
 
 cleanup_tifs <- function(x, debug = TRUE) {
