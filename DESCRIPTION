@@ -1,9 +1,11 @@
 Package: geotar0
 Title: Get imagery with targets 
-Version: 0.0.1
+Version: 0.0.2
 Authors@R: 
     person("Michael", "Sumner", , "mdsumner@gmail.com", role = c("aut", "cre"))
 Description: Example to get imagery by place name, and (optionally) longitude latitude.
+  Exists to demonstrate how to get imagery as files, clean up those files when their unmanaged as targets, and to plot. This
+  is needed by 'mdsumner/emperor.sentinel' which is work in progress. 
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
