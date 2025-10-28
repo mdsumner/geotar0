@@ -2,7 +2,6 @@
 source("./packages.R")
 
 tar_source()
-
 ## a different, handcoded example code internal to locations():
 dloc <- rbind(data.frame(location = "Davis", lon = c(77 + 58/60 + 3/3600), lat = -(68 + 34/60 + 36/3600)),
       data.frame(location = "Casey",
@@ -13,16 +12,38 @@ dloc <- rbind(data.frame(location = "Davis", lon = c(77 + 58/60 + 3/3600), lat =
       data.frame(location = "Kingston", lon = 147.2901, lat = -42.98682))
 
 locations <-  function() {
-  x <- c("Hobart", "Lisbon", "Auckland", "Reine", "Brisbane", "Vancouver", "Bremerhaven", "Hiroshima", "Kotor")
-  tidygeocoder::geo(x) |> dplyr::transmute(location = address, lon = long, lat = lat) |>
-    bind_rows(dloc)
+ sample_n(maps::world.cities, 74) |> dplyr::transmute(location = name, lon = long, lat = lat) |>
+     bind_rows(dloc)
 }
 
 
 
+## key/secret for GDAL and paws-r, REGION for paws-r, endpoint, vsil, virtual for GDAl
+Sys.setenv(AWS_ACCESS_KEY_ID = Sys.getenv("PAWSEY_AWS_ACCESS_KEY_ID"),
+           AWS_SECRET_ACCESS_KEY = Sys.getenv("PAWSEY_AWS_SECRET_ACCESS_KEY"),
+           AWS_REGION = "",
+           AWS_S3_ENDPOINT = "projects.pawsey.org.au",
+           CPL_VSIL_USE_TEMP_FILE_FOR_RANDOM_WRITE = "YES",
+           AWS_VIRTUAL_HOSTING = "NO")
+
+ncpus <- 30
+# Set target options:
+tar_option_set(
+ controller = crew_controller_local(workers = ncpus),
+ repository = "aws",
+ resources = tar_resources(
+   aws = tar_resources_aws(
+     bucket = "geotar0",
+     endpoint = "https://projects.pawsey.org.au",
+     prefix = "_targets-geotar"
+   )
+ )
+)
 
 
-tar_invalidate(junk)
+
+
+#options("paws.log_level" = 3L)
 ## tar_plan supports drake-style targets and also tar_target()
 tar_assign(
   {
@@ -33,20 +54,26 @@ tar_assign(
   crs <- mk_crs(loc$lon, loc$lat) |> tar_target(pattern = map(loc))
   ext <- identity(c(-1, 1, -1, 1) * 3000) |> tar_target()  ## this might become location specific
   llext <- mkcrsextent(ext, crs) |> tar_target(pattern = map(crs), iteration = "list")
-  llxmin <- llext[1L] |> tar_target(pattern = map(llext))
-  llxmax <- llext[2L] |> tar_target(pattern = map(llext))
-  llymin <- llext[3L] |> tar_target(pattern = map(llext))
-  llymax <- llext[4L] |> tar_target(pattern = map(llext))
+  # llxmin <- llext[1L] |> tar_target(pattern = map(llext))
+  # llxmax <- llext[2L] |> tar_target(pattern = map(llext))
+  # llymin <- llext[3L] |> tar_target(pattern = map(llext))
+  # llymax <- llext[4L] |> tar_target(pattern = map(llext))
 
-  imfile <- raster_file(src, crs, ext, c(1024, 0)) |>
-  tar_target(pattern = map(crs), format = "file")
-  result <- tibble(location = loc$location, dsn = imfile,
-                           llxmin = llxmin, llxmax = llxmax, llymin = llymin, llymax = llymax,
-                           xmin = ext[1L], xmax = ext[2L], ymin = ext[3L], ymax = ext[4L],
-                           crs = crs,
-                           source = tibble(source = src)) |>
-                        tar_target(pattern = map(loc, crs, llxmin, llxmax, llymin, llymax, imfile))
-  junk <- cleanup_tifs(result, debug = FALSE) |> tar_target()
+  imfile <- raster_file2(src, crs, ext, c(1024, 0)) |>
+    tar_target(pattern = map(crs))
+
+
+   result <- tibble(location = loc$location, dsn = imfile,
+                            #llxmin = llxmin, llxmax = llxmax, llymin = llymin, llymax = llymax,
+                    llxmin = llext[1], llxmax = llext[2], llymin = llext[3], llymax = llext[4],
+                            xmin = ext[1L], xmax = ext[2L], ymin = ext[3L], ymax = ext[4L],
+                            crs = crs,
+                            source = tibble(source = src)) |>
+                         tar_target(pattern = map(loc, crs, #llxmin, llxmax, llymin, llymax,
+                                                  imfile, llext))
+
+   final <- result |> tar_target()
+  #junk <- cleanup_tifs(result, debug = FALSE) |> tar_target()
 }
 )
 

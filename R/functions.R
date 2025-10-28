@@ -25,3 +25,15 @@ cleanup_tifs <- function(x, debug = TRUE) {
   if (!debug) fs::file_delete(delete)
   if (length(delete) < 1) NULL else delete
 }
+
+
+raster_file2 <- function(dsn, crs, ext, dim) {
+
+  file <- file_temp(pattern = "geotartif_", tmp_dir = "",  ext = ".tif")
+  file <- sprintf("/vsis3/geotar0%s", file)
+
+  gdal_raster_dsn(dsn,
+                  out_dsn = file,
+                  target_crs = crs, target_ext = ext, target_dim = dim,
+                  options = c("-co","COMPRESS=JPEG", "-co", "PHOTOMETRIC=YCBCR", "-of", "GTiff", "-co", "TILED=NO"))[[1]]
+}
